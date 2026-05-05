@@ -7,19 +7,19 @@
     <style>
         :root { --navy: #002147; --gold: #B8860B; --light: #f4f7f6; }
         
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--navy); overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background: var(--navy); overflow: hidden; }
 
-        /* Splash / Logo Screen */
-        #splash-screen {
+        /* Splash Screen */
+        #splash {
             position: fixed; inset: 0; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 2000;
-            background: var(--navy); transition: all 0.8s ease;
+            background: var(--navy); transition: opacity 0.8s ease;
         }
-        #splash-logo { width: 180px; height: 180px; border-radius: 20px; border: 4px solid var(--gold); margin-bottom: 20px; }
-        #splash-msg { color: white; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+        #splash img { width: 180px; height: 180px; border-radius: 20px; border: 4px solid var(--gold); margin-bottom: 20px; }
+        #splash h2 { color: white; letter-spacing: 2px; }
 
-        /* Main Chat Layout */
-        #main-container {
+        /* Main App Container */
+        #app {
             width: 100%; height: 100%; display: none; flex-direction: column;
             background: white; animation: slideUp 0.6s ease;
         }
@@ -27,86 +27,78 @@
         #header {
             background: var(--navy); color: white; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 4px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 4px solid var(--gold);
         }
-        .header-brand { display: flex; align-items: center; gap: 12px; }
-        .header-brand img { width: 40px; height: 40px; border-radius: 6px; background: white; padding: 2px; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand img { width: 40px; height: 40px; border-radius: 6px; background: white; padding: 2px; }
 
-        /* Chat Area with Watermark */
-        #chat-area {
-            flex: 1; overflow-y: auto; padding: 25px;
+        /* Chat Window */
+        #chat-box {
+            flex: 1; overflow-y: auto; padding: 20px;
             background: white url('https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg') no-repeat center;
-            background-size: 300px; position: relative; display: flex; flex-direction: column; gap: 15px;
+            background-size: 250px; position: relative; display: flex; flex-direction: column; gap: 15px;
         }
-        #chat-area::before { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.94); z-index: 0; }
+        #chat-box::before { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.94); z-index: 0; }
 
-        .msg { z-index: 1; max-width: 80%; padding: 14px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.4s; }
-        .bot { background: #f0f2f5; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 5px solid var(--gold); }
+        .msg { z-index: 1; max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.3s; }
+        .bot { background: #f0f2f5; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--gold); }
         .user { background: var(--navy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
-        .voice-icon { cursor: pointer; margin-left: 10px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
-        .voice-icon:hover { opacity: 1; color: var(--gold); }
+        .speak-icon { cursor: pointer; margin-left: 10px; font-size: 14px; opacity: 0.7; }
 
-        /* Buttons & Inputs */
-        .sug-container { z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
-        .sug-btn { background: white; border: 2px solid var(--navy); color: var(--navy); padding: 8px 16px; border-radius: 25px; font-weight: bold; cursor: pointer; }
-        .sug-btn:hover { background: var(--navy); color: white; }
+        /* Controls */
+        .sug-container { z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+        .sug-btn { background: white; border: 2px solid var(--navy); color: var(--navy); padding: 8px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-        #input-panel { padding: 20px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 12px; }
-        #user-msg { flex: 1; border: 1px solid #ddd; padding: 15px 20px; border-radius: 30px; outline: none; font-size: 16px; }
-        .ctrl-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--navy); }
+        #input-area { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+        #user-input { flex: 1; border: 1px solid #ddd; padding: 12px 18px; border-radius: 25px; outline: none; font-size: 15px; }
+        .action-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--navy); }
 
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<!-- 1. Splash Screen -->
-<div id="splash-screen">
-    <img id="splash-logo" src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
-    <div id="splash-msg">LOYOLA THOZHAN</div>
+<div id="splash">
+    <img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
+    <h2>LOYOLA THOZHAN</h2>
 </div>
 
-<!-- 2. Main Chat App -->
-<div id="main-container">
+<div id="app">
     <div id="header">
-        <div class="header-brand">
+        <div class="brand">
             <img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
-            <div><b>Loyola Thozhan</b><br><small style="color:#4caf50;">● Digital Assistant</small></div>
+            <div><b>Loyola Thozhan</b><br><small style="color:#4caf50;">● Online Assistant</small></div>
         </div>
-        <button onclick="logout()" style="background:var(--gold); border:none; color:white; padding:6px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">Logout</button>
+        <button onclick="logout()" style="background:var(--gold); border:none; color:white; padding:6px 12px; border-radius:5px; cursor:pointer;">Reset</button>
     </div>
 
-    <div id="chat-area"></div>
+    <div id="chat-box"></div>
 
-    <div id="input-panel">
-        <button class="ctrl-btn" onclick="startVoiceRecognition()">🎤</button>
-        <input type="text" id="user-msg" placeholder="Type your message here..." onkeypress="if(event.key==='Enter') sendMessage()">
-        <button class="ctrl-btn" onclick="sendMessage()">➤</button>
+    <div id="input-area">
+        <button class="action-btn" onclick="startVoice()">🎤</button>
+        <input type="text" id="user-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') handleSend()">
+        <button class="action-btn" onclick="handleSend()">➤</button>
     </div>
 </div>
 
 <script>
-    // CSV Links from your Sheet
-    const db = {
-        history: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=2120131688&single=true&output=csv",
-        dir: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=1759326812&single=true&output=csv",
-        proc: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=819567382&single=true&output=csv"
-    };
+    // CONFIGURATION
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_YcazodH28P6L2m6vAm50B-p-3a9fUotfQnPxNoOVEEDqnv3kN5odqwRk6q5Mot6J/exec";
 
     let step = 0;
-    let user = { name: '', role: '', shift: '', dept: '' };
-    const chat = document.getElementById('chat-area');
+    let user = { name: '', role: '', shift: '', deptNo: '' };
+    const chatBox = document.getElementById('chat-box');
 
-    // INITIAL LOAD
+    // Load Sequence
     window.onload = () => {
         setTimeout(() => {
-            document.getElementById('splash-screen').style.opacity = '0';
+            document.getElementById('splash').style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('main-container').style.display = 'flex';
-                initiateConversation();
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                startApp();
             }, 800);
         }, 2000);
     };
@@ -115,10 +107,10 @@
         const div = document.createElement('div');
         div.className = `msg ${side}`;
         let html = `<span>${text}</span>`;
-        if(side === 'bot') html += `<span class="voice-icon" onclick="speakText('${text.replace(/'/g, "\\'")}')">🔊</span>`;
+        if(side === 'bot') html += `<span class="speak-icon" onclick="speak('${text.replace(/'/g, "\\'")}')">🔊</span>`;
         div.innerHTML = html;
-        chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function showSuggestions(list) {
@@ -128,131 +120,126 @@
             const btn = document.createElement('button');
             btn.className = 'sug-btn';
             btn.innerText = item;
-            btn.onclick = () => { addMessage(item, 'user'); handleLogic(item); };
+            btn.onclick = () => { addMessage(item, 'user'); processFlow(item); };
             div.appendChild(btn);
         });
-        chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function initiateConversation() {
-        const saved = localStorage.getItem('lt_user');
+    function startApp() {
+        const saved = localStorage.getItem('thozhan_user');
         if(saved) {
             user = JSON.parse(saved);
             step = 100;
-            addMessage(`Welcome back, ${user.name}! How can I help you today?`, 'bot');
+            addMessage(`Welcome back, ${user.name}! How can I assist you today?`, 'bot');
             mainMenu();
         } else {
-            addMessage("Vanakkam! Welcome to Loyola Thozhan. To begin, please enter your Full Name:", 'bot');
+            addMessage("Vanakkam! Welcome to Loyola Thozhan. To get started, please enter your Full Name:", 'bot');
             step = 1;
         }
     }
 
-    function sendMessage() {
-        const input = document.getElementById('user-msg');
+    function handleSend() {
+        const input = document.getElementById('user-input');
         const val = input.value.trim();
         if(!val) return;
         addMessage(val, 'user');
         input.value = '';
-        handleLogic(val);
+        processFlow(val);
     }
 
-    async function handleLogic(val) {
-        setTimeout(async () => {
-            if(step === 1) {
-                user.name = val;
-                addMessage(`Thank you, ${val}. Please select your role:`, 'bot');
-                showSuggestions(['Student', 'Staff', 'Guest']);
-                step = 2;
-            } else if(step === 2) {
-                user.role = val;
-                if(val === 'Student') {
-                    addMessage("Understood. Which shift are you in?", 'bot');
-                    showSuggestions(['Shift 1', 'Shift 2']);
-                    step = 3;
-                } else { finalizeProfile(); }
-            } else if(step === 3) {
-                user.shift = val;
-                addMessage("Please enter your Department Code (e.g., 23-UAZ-051):", 'bot');
-                step = 4;
-            } else if(step === 4) {
-                user.dept = val;
-                finalizeProfile();
-            } else {
-                await processQuery(val);
-            }
-        }, 600);
+    async function processFlow(val) {
+        if(step === 1) {
+            user.name = val;
+            addMessage(`Thank you ${val}. Are you a Student, Staff, or Guest?`, 'bot');
+            showSuggestions(['Student', 'Staff', 'Guest']);
+            step = 2;
+        } else if(step === 2) {
+            user.role = val;
+            if(val === 'Student') {
+                addMsgWithDelay("Which shift do you belong to?", ['Shift 1', 'Shift 2']);
+                step = 3;
+            } else { finalize(); }
+        } else if(step === 3) {
+            user.shift = val;
+            addMessage("Please enter your Department Number (e.g., 23-UAZ-001):", 'bot');
+            step = 4;
+        } else if(step === 4) {
+            user.deptNo = val;
+            finalize();
+        } else if(step === 100) {
+            askAI(val);
+        }
     }
 
-    function finalizeProfile() {
-        localStorage.setItem('lt_user', JSON.stringify(user));
+    function addMsgWithDelay(text, sugs) {
+        setTimeout(() => {
+            addMessage(text, 'bot');
+            if(sugs) showSuggestions(sugs);
+        }, 500);
+    }
+
+    function finalize() {
+        localStorage.setItem('thozhan_user', JSON.stringify(user));
         step = 100;
-        addMessage("Profile created successfully! What would you like to know?", 'bot');
+        addMessage("Profile set! You can ask about Scholarships, Procedures, or History.", 'bot');
         mainMenu();
     }
 
     function mainMenu() {
-        showSuggestions(['History', 'Scholarships', 'Who is Who', 'OD Procedure', 'End Chat']);
+        showSuggestions(['History', 'Scholarships', 'Who is Who', 'Bonafide Certificate', 'End Chat']);
     }
 
-    async function processQuery(q) {
-    const scriptURL = "https://script.google.com/macros/s/AKfycbz_YcazodH28P6L2m6vAm50B-p-3a9fUotfQnPxNoOVEEDqnv3kN5odqwRk6q5Mot6J/exec";
-    
-    // Add a loading message
-    addMessage("Thinking...", 'bot');
+    async function askAI(q) {
+        if(q.toLowerCase() === 'end chat') {
+            addMessage("Closing session. Refresh the page to restart. Have a great day!", 'bot');
+            setTimeout(() => document.getElementById('app').style.display = 'none', 2000);
+            return;
+        }
 
-    const response = await fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({
-            query: q,
-            user: user // Passes Name, Shift, and Dept Number
-        })
-    });
-
-    const data = await response.json();
-    
-    // Update the "Thinking..." message with the real AI answer
-    const bots = document.querySelectorAll('.bot span');
-    bots[bots.length - 1].innerText = data.reply;
-    
-    speakText(data.reply); // Read it aloud for accessibility
-    setTimeout(mainMenu, 1000);
-}
-    function terminateApp() {
-        document.getElementById('main-container').style.display = 'none';
-        const splash = document.getElementById('splash-screen');
-        splash.style.display = 'flex';
-        splash.style.opacity = '1';
-        document.getElementById('splash-msg').innerHTML = "CHAT ENDED.<br><small>Refresh to start again.</small>";
+        addMessage("Thinking...", 'bot');
+        
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ query: q, user: user })
+            });
+            const data = await response.json();
+            
+            const bots = document.querySelectorAll('.bot span');
+            bots[bots.length - 1].innerText = data.reply;
+            speak(data.reply);
+        } catch (e) {
+            const bots = document.querySelectorAll('.bot span');
+            bots[bots.length - 1].innerText = "I'm having trouble connecting to my database. Please try again.";
+        }
+        setTimeout(mainMenu, 1500);
     }
 
-    // ACCESSIBILITY TOOLS
-    function speakText(text) {
+    function speak(text) {
         window.speechSynthesis.cancel();
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = 'en-IN';
-        window.speechSynthesis.speak(speech);
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-IN';
+        window.speechSynthesis.speak(utterance);
     }
 
-    function startVoiceRecognition() {
+    function startVoice() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return alert("Speech recognition not supported in this browser.");
+        if (!SpeechRecognition) return alert("Speech recognition not supported.");
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-IN';
         recognition.start();
         recognition.onresult = (e) => {
-            document.getElementById('user-msg').value = e.results[0][0].transcript;
-            sendMessage();
+            document.getElementById('user-input').value = e.results[0][0].transcript;
+            handleSend();
         };
     }
 
     function logout() {
-        if(confirm("Logout and clear all data?")) {
-            localStorage.clear();
-            location.reload();
-        }
+        localStorage.clear();
+        location.reload();
     }
 </script>
-
 </body>
 </html>
