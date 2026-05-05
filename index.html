@@ -3,243 +3,550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Loyola Thozhan | Full-Page Assistant</title>
+    <title>Loyola Thozhan</title>
     <style>
-        :root { --navy: #002147; --gold: #B8860B; --light: #f4f7f6; }
-        
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background: var(--navy); overflow: hidden; }
-
-        /* Splash Screen */
-        #splash {
-            position: fixed; inset: 0; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 2000;
-            background: var(--navy); transition: opacity 0.8s ease;
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Cormorant+Garamond:wght@600&display=swap');
+        :root { 
+            --navy: #001a36; 
+            --gold: #B8860B; 
+            --gold-lt: #fdf3d8; 
+            --bg: #f5f7fa; 
+            --white: #ffffff; 
+            --text: #1a1a2e; 
+            --muted: #6b7280; 
+            --border: #e5e7eb; 
+            --r: 14px;
         }
-        #splash img { width: 180px; height: 180px; border-radius: 20px; border: 4px solid var(--gold); margin-bottom: 20px; }
-        #splash h2 { color: white; letter-spacing: 2px; }
-
-        /* Main App Container */
-        #app {
-            width: 100%; height: 100%; display: none; flex-direction: column;
-            background: white; animation: slideUp 0.6s ease;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { 
+            width: 100%; 
+            height: 100%; 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--navy); 
+            overflow: hidden; 
         }
 
-        #header {
-            background: var(--navy); color: white; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 4px solid var(--gold);
+        /* SPLASH SCREEN */
+        #splash { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--navy); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 999; 
+            transition: opacity 0.7s ease; 
         }
-        .brand { display: flex; align-items: center; gap: 12px; }
-        .brand img { width: 40px; height: 40px; border-radius: 6px; background: white; padding: 2px; }
-
-        /* Chat Window */
-        #chat-box {
-            flex: 1; overflow-y: auto; padding: 20px;
-            background: white url('https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg') no-repeat center;
-            background-size: 250px; position: relative; display: flex; flex-direction: column; gap: 15px;
+        #splash .s-logo { 
+            width: 90px; 
+            height: 90px; 
+            border-radius: 20px; 
+            background: var(--gold); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            animation: pulse 1.5s infinite; 
         }
-        #chat-box::before { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.94); z-index: 0; }
+        #splash .s-logo svg { width: 48px; height: 48px; fill: #fff; }
+        #splash h1 { 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', serif; 
+            font-size: 28px; 
+            letter-spacing: 2px; 
+            margin-bottom: 6px; 
+            text-align: center;
+        }
+        #splash p { color: #86a0b8; font-size: 13px; letter-spacing: 1px; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 
-        .msg { z-index: 1; max-width: 80%; padding: 12px 16px; border-radius: 15px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.3s; }
-        .bot { background: #f0f2f5; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--gold); }
-        .user { background: var(--navy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        /* APP LAYOUT */
+        #app { width: 100%; height: 100%; display: none; flex-direction: column; background: var(--white); }
 
-        .speak-icon { cursor: pointer; margin-left: 10px; font-size: 14px; opacity: 0.7; }
+        /* HEADER */
+        #hdr { 
+            background: var(--navy); 
+            padding: 0 18px; 
+            height: 62px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            border-bottom: 2.5px solid var(--gold); 
+            flex-shrink: 0; 
+        }
+        .hdr-icon { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 8px; 
+            background: var(--gold); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+        }
+        .hdr-icon svg { width: 20px; height: 20px; fill: #fff; }
+        .hdr-brand { 
+            color: #fff; 
+            font-size: 15px; 
+            font-weight: 600; 
+            font-family: 'Cormorant Garamond', serif; 
+            letter-spacing: .5px; 
+        }
+        .hdr-sub { 
+            color: #4caf50; 
+            font-size: 11px; 
+            font-weight: 400; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        .green-dot { width: 6px; height: 6px; border-radius: 50%; background: #4caf50; }
+        .hdr-reset { 
+            margin-left: auto; 
+            background: transparent; 
+            border: 1.5px solid var(--gold); 
+            color: var(--gold); 
+            padding: 5px 14px; 
+            border-radius: 20px; 
+            font-size: 11.5px; 
+            font-family: 'Outfit', sans-serif; 
+            cursor: pointer; 
+            font-weight: 500; 
+            transition: all .15s; 
+        }
+        .hdr-reset:hover { background: var(--gold); color: #fff; }
 
-        /* Controls */
-        .sug-container { z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-        .sug-btn { background: white; border: 2px solid var(--navy); color: var(--navy); padding: 8px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        /* CHAT */
+        #chat { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 18px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            background: var(--bg); 
+            position: relative;
+        }
+        #chat::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url('https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg') no-repeat center;
+            background-size: 250px;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        #chat::-webkit-scrollbar { width: 4px; }
+        #chat::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 
-        #input-area { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
-        #user-input { flex: 1; border: 1px solid #ddd; padding: 12px 18px; border-radius: 25px; outline: none; font-size: 15px; }
-        .action-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--navy); }
+        .row-bot { display: flex; align-items: flex-end; gap: 8px; animation: fadeUp .25s ease; position: relative; z-index: 1; }
+        .row-user { display: flex; justify-content: flex-end; animation: fadeUp .25s ease; position: relative; z-index: 1; }
+        .av { 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            background: var(--navy); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+        }
+        .av svg { width: 14px; height: 14px; fill: var(--gold); }
+        .bbl-bot { 
+            background: var(--white); 
+            color: var(--text); 
+            border-radius: 16px 16px 16px 3px; 
+            padding: 11px 15px; 
+            font-size: 13.5px; 
+            line-height: 1.65; 
+            max-width: 78%; 
+            border: 1px solid var(--border); 
+            border-left: 3px solid var(--gold); 
+        }
+        .bbl-user { 
+            background: var(--navy); 
+            color: #fff; 
+            border-radius: 16px 16px 3px 16px; 
+            padding: 11px 15px; 
+            font-size: 13.5px; 
+            line-height: 1.65; 
+            max-width: 78%; 
+        }
+        .ts { font-size: 10px; color: var(--muted); margin-top: 3px; padding-left: 36px; }
+        .ts-r { font-size: 10px; color: var(--muted); margin-top: 3px; text-align: right; }
 
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* CHIPS */
+        .chips { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 7px; 
+            padding-left: 36px; 
+            animation: fadeUp .3s ease; 
+            position: relative;
+            z-index: 2;
+        }
+        .chip { 
+            background: var(--white); 
+            border: 1.5px solid var(--gold); 
+            color: #854F0B; 
+            padding: 7px 15px; 
+            border-radius: 20px; 
+            font-size: 12.5px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            font-family: 'Outfit', sans-serif; 
+            transition: all .15s; 
+            letter-spacing: .2px; 
+        }
+        .chip:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+        /* TYPING */
+        .typing-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 10px; }
+        .typing-bubble { 
+            background: var(--white); 
+            border: 1px solid var(--border); 
+            border-left: 3px solid var(--gold); 
+            border-radius: 16px 16px 16px 3px; 
+            padding: 12px 16px; 
+            display: flex; 
+            gap: 5px; 
+            align-items: center; 
+        }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: bounce .9s ease-in-out infinite; }
+        .dot:nth-child(2) { animation-delay: .15s; }
+        .dot:nth-child(3) { animation-delay: .3s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(-5px); opacity: 1; } }
+
+        /* INPUT AREA */
+        #inp-area { 
+            padding: 12px 14px; 
+            border-top: 1px solid var(--border); 
+            display: flex; 
+            align-items: center; 
+            gap: 9px; 
+            background: var(--white); 
+            flex-shrink: 0; 
+        }
+        #msg-inp { 
+            flex: 1; 
+            border: 1px solid var(--border); 
+            padding: 10px 16px; 
+            border-radius: 24px; 
+            outline: none; 
+            font-size: 13.5px; 
+            font-family: 'Outfit', sans-serif; 
+            background: #f9fafb; 
+            color: var(--text); 
+            transition: border-color .15s; 
+        }
+        #msg-inp:focus { border-color: var(--gold); background: #fff; }
+        #msg-inp::placeholder { color: #adb5bd; }
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--navy);
+            font-size: 18px;
+        }
+        .send-btn { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: var(--navy); 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+            transition: background .15s; 
+        }
+        .send-btn:hover { background: var(--gold); }
+        .send-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+        .speak-icon-btn {
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 14px;
+            vertical-align: middle;
+            opacity: 0.6;
+        }
+        .speak-icon-btn:hover { opacity: 1; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+<!-- SPLASH SCREEN -->
 <div id="splash">
-    <img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
-    <h2>LOYOLA THOZHAN</h2>
+    <div class="s-logo">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <h1>LOYOLA THOZHAN</h1>
+    <p>Your College Companion</p>
 </div>
 
+<!-- MAIN APP -->
 <div id="app">
-    <div id="header">
-        <div class="brand">
-            <img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
-            <div><b>Loyola Thozhan</b><br><small style="color:#4caf50;">● Online Assistant</small></div>
+    <div id="hdr">
+        <div class="hdr-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        <button onclick="logout()" style="background:var(--gold); border:none; color:white; padding:6px 12px; border-radius:5px; cursor:pointer;">Reset</button>
+        <div>
+            <div class="hdr-brand">Loyola Thozhan</div>
+            <div class="hdr-sub"><div class="green-dot"></div>Online Assistant</div>
+        </div>
+        <button class="hdr-reset" onclick="resetApp()">Reset</button>
     </div>
-
-    <div id="chat-box"></div>
-
-    <div id="input-area">
-        <button class="action-btn" onclick="startVoice()">🎤</button>
-        <input type="text" id="user-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') handleSend()">
-        <button class="action-btn" onclick="handleSend()">➤</button>
+    <div id="chat"></div>
+    <div id="inp-area">
+        <button class="icon-btn" onclick="startVoiceRecognition()" title="Speak">🎤</button>
+        <input type="text" id="msg-inp" placeholder="Ask me anything about Loyola..." />
+        <button class="send-btn" id="send-btn" onclick="handleSend()">
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
     </div>
 </div>
 
 <script>
-    // CONFIGURATION
+    // --- CONFIGURATION ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_YcazodH28P6L2m6vAm50B-p-3a9fUotfQnPxNoOVEEDqnv3kN5odqwRk6q5Mot6J/exec";
 
     let step = 0;
     let user = { name: '', role: '', shift: '', deptNo: '' };
-    const chatBox = document.getElementById('chat-box');
+    const chatEl = document.getElementById('chat');
+    const inpEl = document.getElementById('msg-inp');
 
-    // Load Sequence
+    // Splash to App Transition
     window.onload = () => {
         setTimeout(() => {
             document.getElementById('splash').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('splash').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
-                startApp();
-            }, 800);
+                initBot();
+            }, 700);
         }, 2000);
     };
 
-    function addMessage(text, side) {
-        const div = document.createElement('div');
-        div.className = `msg ${side}`;
-        let html = `<span>${text}</span>`;
-        if(side === 'bot') html += `<span class="speak-icon" onclick="speak('${text.replace(/'/g, "\\'")}')">🔊</span>`;
-        div.innerHTML = html;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    function getTime() {
+        const now = new Date();
+        return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     }
 
-    function showSuggestions(list) {
+    function addBotMsg(text, showSpeaker = true) {
+        const row = document.createElement('div');
+        row.className = 'row-bot';
+        let speakerHtml = showSpeaker ? `<span class="speak-icon-btn" onclick="readAloud('${text.replace(/'/g, "\\'")}')">🔊</span>` : '';
+        row.innerHTML = `<div class="av"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="bbl-bot"><span>${text}</span>${speakerHtml}</div>`;
+        chatEl.appendChild(row);
+        const ts = document.createElement('div');
+        ts.className = 'ts';
+        ts.textContent = getTime();
+        chatEl.appendChild(ts);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addUserMsg(text) {
+        const row = document.createElement('div');
+        row.className = 'row-user';
+        row.innerHTML = `<div class="bbl-user">${text}</div>`;
+        chatEl.appendChild(row);
+        const ts = document.createElement('div');
+        ts.className = 'ts-r';
+        ts.textContent = getTime();
+        chatEl.appendChild(ts);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addChips(list) {
         const div = document.createElement('div');
-        div.className = 'sug-container';
+        div.className = 'chips';
         list.forEach(item => {
             const btn = document.createElement('button');
-            btn.className = 'sug-btn';
+            btn.className = 'chip';
             btn.innerText = item;
-            btn.onclick = () => { addMessage(item, 'user'); processFlow(item); };
+            btn.onclick = () => {
+                div.remove();
+                addUserMsg(item);
+                processFlow(item);
+            };
             div.appendChild(btn);
         });
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        chatEl.appendChild(div);
+        chatEl.scrollTop = chatEl.scrollHeight;
     }
 
-    function startApp() {
-        const saved = localStorage.getItem('thozhan_user');
+    function showTyping(callback) {
+        const row = document.createElement('div');
+        row.className = 'typing-row';
+        row.id = 'typing-indicator';
+        row.innerHTML = `<div class="av"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+        chatEl.appendChild(row);
+        chatEl.scrollTop = chatEl.scrollHeight;
+        setTimeout(() => {
+            row.remove();
+            callback();
+        }, 800);
+    }
+
+    function initBot() {
+        const saved = localStorage.getItem('thozhan_user_v4');
         if(saved) {
             user = JSON.parse(saved);
             step = 100;
-            addMessage(`Welcome back, ${user.name}! How can I assist you today?`, 'bot');
-            mainMenu();
+            showTyping(() => {
+                addBotMsg(`Welcome back, ${user.name}! I remember you are a ${user.role} from ${user.shift}. How can I assist you today?`);
+                mainMenu();
+            });
         } else {
-            addMessage("Vanakkam! Welcome to Loyola Thozhan. To get started, please enter your Full Name:", 'bot');
-            step = 1;
+            showTyping(() => {
+                addBotMsg("Vanakkam! 🙏 I am Loyola Thozhan, your campus assistant. To get started, what is your <strong>Full Name</strong>?");
+                step = 1;
+            });
         }
     }
 
     function handleSend() {
-        const input = document.getElementById('user-input');
-        const val = input.value.trim();
+        const val = inpEl.value.trim();
         if(!val) return;
-        addMessage(val, 'user');
-        input.value = '';
+        addUserMsg(val);
+        inpEl.value = '';
         processFlow(val);
     }
 
-    async function processFlow(val) {
+    function processFlow(val) {
         if(step === 1) {
             user.name = val;
-            addMessage(`Thank you ${val}. Are you a Student, Staff, or Guest?`, 'bot');
-            showSuggestions(['Student', 'Staff', 'Guest']);
-            step = 2;
+            showTyping(() => {
+                addBotMsg(`Nice to meet you, ${val}. Are you a Student, Staff, or Guest?`);
+                addChips(['Student', 'Staff', 'Guest']);
+                step = 2;
+            });
         } else if(step === 2) {
             user.role = val;
             if(val === 'Student') {
-                addMsgWithDelay("Which shift do you belong to?", ['Shift 1', 'Shift 2']);
-                step = 3;
-            } else { finalize(); }
+                showTyping(() => {
+                    addBotMsg("Understood. Which shift do you belong to?");
+                    addChips(['Shift 1', 'Shift 2']);
+                    step = 3;
+                });
+            } else { finalizeOnboarding(); }
         } else if(step === 3) {
             user.shift = val;
-            addMessage("Please enter your Department Number (e.g., 23-UAZ-001):", 'bot');
-            step = 4;
+            showTyping(() => {
+                addBotMsg("Please enter your Department Number (e.g., 23-UAZ-001):");
+                step = 4;
+            });
         } else if(step === 4) {
             user.deptNo = val;
-            finalize();
+            finalizeOnboarding();
         } else if(step === 100) {
             askAI(val);
         }
     }
 
-    function addMsgWithDelay(text, sugs) {
-        setTimeout(() => {
-            addMessage(text, 'bot');
-            if(sugs) showSuggestions(sugs);
-        }, 500);
-    }
-
-    function finalize() {
-        localStorage.setItem('thozhan_user', JSON.stringify(user));
+    function finalizeOnboarding() {
+        localStorage.setItem('thozhan_user_v4', JSON.stringify(user));
         step = 100;
-        addMessage("Profile set! You can ask about Scholarships, Procedures, or History.", 'bot');
-        mainMenu();
+        showTyping(() => {
+            addBotMsg("Excellent! Profile saved. I can now answer questions about scholarships, procedures, and campus history.");
+            mainMenu();
+        });
     }
 
     function mainMenu() {
-        showSuggestions(['History', 'Scholarships', 'Who is Who', 'Bonafide Certificate', 'End Chat']);
+        addChips(['📜 History', '🎓 Scholarships', '👤 Who is Who', '📄 Bonafide Certificate', '🏢 Departments', '❌ End Chat']);
     }
 
     async function askAI(q) {
-        if(q.toLowerCase() === 'end chat') {
-            addMessage("Closing session. Refresh the page to restart. Have a great day!", 'bot');
-            setTimeout(() => document.getElementById('app').style.display = 'none', 2000);
+        const query = q.toLowerCase();
+        if(query.includes('end chat') || query.includes('bye')) {
+            showTyping(() => {
+                addBotMsg("Thank you for using Loyola Thozhan. Have a wonderful day! 🙏");
+                setTimeout(() => {
+                    document.getElementById('app').style.display = 'none';
+                    document.getElementById('splash').style.display = 'flex';
+                    document.getElementById('splash').style.opacity = '1';
+                    document.querySelector('#splash p').innerText = "Session Ended. Refresh to restart.";
+                }, 1500);
+            });
             return;
         }
 
-        addMessage("Thinking...", 'bot');
-        
+        // Animated Thinking State
+        const row = document.createElement('div');
+        row.className = 'typing-row';
+        row.innerHTML = `<div class="av"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="bbl-bot"><i>Thinking...</i></div>`;
+        chatEl.appendChild(row);
+        chatEl.scrollTop = chatEl.scrollHeight;
+
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify({ query: q, user: user })
             });
+
             const data = await response.json();
+            row.remove(); // Remove thinking message
             
-            const bots = document.querySelectorAll('.bot span');
-            bots[bots.length - 1].innerText = data.reply;
-            speak(data.reply);
+            showTyping(() => {
+                addBotMsg(data.reply);
+                setTimeout(mainMenu, 1000);
+            });
+
         } catch (e) {
-            const bots = document.querySelectorAll('.bot span');
-            bots[bots.length - 1].innerText = "I'm having trouble connecting to my database. Please try again.";
+            row.remove();
+            showTyping(() => {
+                addBotMsg("I'm having trouble connecting to the campus database. Please ensure your script is deployed correctly.");
+                setTimeout(mainMenu, 1000);
+            });
         }
-        setTimeout(mainMenu, 1500);
     }
 
-    function speak(text) {
+    function readAloud(text) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-IN';
         window.speechSynthesis.speak(utterance);
     }
 
-    function startVoice() {
+    function startVoiceRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return alert("Speech recognition not supported.");
+        if (!SpeechRecognition) {
+            alert("Voice recognition not supported in this browser.");
+            return;
+        }
         const recognition = new SpeechRecognition();
         recognition.lang = 'en-IN';
         recognition.start();
+        
+        recognition.onstart = () => { inpEl.placeholder = "Listening..."; };
         recognition.onresult = (e) => {
-            document.getElementById('user-input').value = e.results[0][0].transcript;
+            inpEl.value = e.results[0][0].transcript;
+            inpEl.placeholder = "Ask me anything about Loyola...";
             handleSend();
         };
+        recognition.onerror = () => { inpEl.placeholder = "Ask me anything about Loyola..."; };
     }
 
-    function logout() {
-        localStorage.clear();
-        location.reload();
+    function resetApp() {
+        if(confirm("Clear profile and chat history?")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
+
+    inpEl.addEventListener('keypress', e => { if(e.key === 'Enter') handleSend(); });
 </script>
 </body>
 </html>
