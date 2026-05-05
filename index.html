@@ -3,223 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Loyola Thozhan | Campus Assistant</title>
+    <title>Loyola Thozhan | Full-Page Assistant</title>
     <style>
-        :root { --navy: #002147; --gold: #B8860B; --light: #f8f9fa; }
+        :root { --navy: #002147; --gold: #B8860B; --light: #f4f7f6; }
         
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #e0e0e0; margin: 0; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--navy); overflow: hidden; }
 
-        /* Floating Launcher */
-        #launcher {
-            position: fixed; bottom: 25px; right: 25px;
-            width: 65px; height: 65px; background: var(--navy);
-            border-radius: 50%; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001;
-            border: 2px solid var(--gold); transition: transform 0.2s;
+        /* Splash / Logo Screen */
+        #splash-screen {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 2000;
+            background: var(--navy); transition: all 0.8s ease;
         }
-        #launcher img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        #splash-logo { width: 180px; height: 180px; border-radius: 20px; border: 4px solid var(--gold); margin-bottom: 20px; }
+        #splash-msg { color: white; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
 
-        /* Chat Window */
-        #chat-window {
-            position: fixed; bottom: 100px; right: 25px;
-            width: calc(100% - 40px); max-width: 400px; height: 80vh; max-height: 600px;
-            background: white; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-            display: none; flex-direction: column; overflow: hidden; z-index: 1000;
+        /* Main Chat Layout */
+        #main-container {
+            width: 100%; height: 100%; display: none; flex-direction: column;
+            background: white; animation: slideUp 0.6s ease;
         }
 
-        /* Header */
-        #header { 
-            background: var(--navy); color: white; padding: 12px 15px; 
+        #header {
+            background: var(--navy); color: white; padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--gold);
+            border-bottom: 4px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .header-profile { display: flex; align-items: center; gap: 10px; }
-        .header-profile img { width: 35px; height: 35px; border-radius: 6px; background: white; padding: 2px; }
-        .header-titles b { display: block; font-size: 14px; }
-        .header-titles span { font-size: 10px; color: #4caf50; display: flex; align-items: center; gap: 4px; }
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .header-brand img { width: 40px; height: 40px; border-radius: 6px; background: white; padding: 2px; }
 
-        .controls button { background: rgba(255,255,255,0.15); border: none; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 5px; }
-
-        /* Messages Area with Logo Watermark */
-        #messages { 
-            flex: 1; padding: 15px; overflow-y: auto; 
+        /* Chat Area with Watermark */
+        #chat-area {
+            flex: 1; overflow-y: auto; padding: 25px;
             background: white url('https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg') no-repeat center;
-            background-size: 200px; background-attachment: local;
-            position: relative; display: flex; flex-direction: column; gap: 12px;
+            background-size: 300px; position: relative; display: flex; flex-direction: column; gap: 15px;
         }
-        #messages::before {
-            content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.93); z-index: 0;
-        }
+        #chat-area::before { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.94); z-index: 0; }
 
-        .msg { z-index: 1; max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; animation: slideUp 0.3s ease; }
-        .bot { background: #f1f3f4; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--gold); }
+        .msg { z-index: 1; max-width: 80%; padding: 14px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.4s; }
+        .bot { background: #f0f2f5; color: var(--navy); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 5px solid var(--gold); }
         .user { background: var(--navy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
-        .speak-btn { cursor: pointer; margin-left: 8px; font-size: 14px; vertical-align: middle; }
+        .voice-icon { cursor: pointer; margin-left: 10px; font-size: 16px; opacity: 0.7; transition: 0.2s; }
+        .voice-icon:hover { opacity: 1; color: var(--gold); }
 
-        /* Suggestions */
-        .sug-box { z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; }
-        .sug-btn { background: white; border: 1px solid var(--navy); color: var(--navy); padding: 6px 12px; border-radius: 18px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        /* Buttons & Inputs */
+        .sug-container { z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
+        .sug-btn { background: white; border: 2px solid var(--navy); color: var(--navy); padding: 8px 16px; border-radius: 25px; font-weight: bold; cursor: pointer; }
         .sug-btn:hover { background: var(--navy); color: white; }
 
-        /* Input Area */
-        #input-bar { padding: 12px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px; z-index: 1; }
-        #user-msg { flex: 1; border: 1px solid #ddd; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 14px; }
-        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--navy); }
+        #input-panel { padding: 20px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; gap: 12px; }
+        #user-msg { flex: 1; border: 1px solid #ddd; padding: 15px 20px; border-radius: 30px; outline: none; font-size: 16px; }
+        .ctrl-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--navy); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-<div id="launcher" onclick="toggleChat()"><img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg"></div>
+<!-- 1. Splash Screen -->
+<div id="splash-screen">
+    <img id="splash-logo" src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
+    <div id="splash-msg">LOYOLA THOZHAN</div>
+</div>
 
-<div id="chat-window">
+<!-- 2. Main Chat App -->
+<div id="main-container">
     <div id="header">
-        <div class="header-profile">
+        <div class="header-brand">
             <img src="https://zendna1994.github.io/loyolathozhan/LoyolaThozhan.jpg">
-            <div class="header-titles">
-                <b>Loyola Thozhan</b>
-                <span>● Active Assistant</span>
-            </div>
+            <div><b>Loyola Thozhan</b><br><small style="color:#4caf50;">● Digital Assistant</small></div>
         </div>
-        <div class="controls">
-            <button onclick="clearChat()">Clear</button>
-            <button onclick="logout()">Logout</button>
-        </div>
+        <button onclick="logout()" style="background:var(--gold); border:none; color:white; padding:6px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">Logout</button>
     </div>
 
-    <div id="messages"></div>
+    <div id="chat-area"></div>
 
-    <div id="input-bar">
-        <button class="icon-btn" onclick="startVoice()">🎤</button>
-        <input type="text" id="user-msg" placeholder="Ask Thozhan..." onkeypress="if(event.key==='Enter') processInput()">
-        <button class="icon-btn" onclick="processInput()">➤</button>
+    <div id="input-panel">
+        <button class="ctrl-btn" onclick="startVoiceRecognition()">🎤</button>
+        <input type="text" id="user-msg" placeholder="Type your message here..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button class="ctrl-btn" onclick="sendMessage()">➤</button>
     </div>
 </div>
 
 <script>
-    const csvLinks = {
-        dept: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=0&single=true&output=csv",
-        proc: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=819567382&single=true&output=csv",
-        schol: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=1093007465&single=true&output=csv",
+    // CSV Links from your Sheet
+    const db = {
+        history: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=2120131688&single=true&output=csv",
         dir: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=1759326812&single=true&output=csv",
-        hist: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=2120131688&single=true&output=csv"
+        proc: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOx1CY1ARp2KQySoW5NyAILv2Z_t8YUBURHY-TZUHmHt0DOsxqXMeH1MfbwJoUu46RzDxhoPNGN4gC/pub?gid=819567382&single=true&output=csv"
     };
 
     let step = 0;
-    let user = { name: '', role: '', shift: '', deptNo: '' };
-    const msgBox = document.getElementById('messages');
-    const input = document.getElementById('user-msg');
+    let user = { name: '', role: '', shift: '', dept: '' };
+    const chat = document.getElementById('chat-area');
 
-    function toggleChat() {
-        const win = document.getElementById('chat-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-        if (win.style.display === 'flex' && step === 0) runOnboarding();
-    }
+    // INITIAL LOAD
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-container').style.display = 'flex';
+                initiateConversation();
+            }, 800);
+        }, 2000);
+    };
 
-    function addMsg(text, side) {
+    function addMessage(text, side) {
         const div = document.createElement('div');
         div.className = `msg ${side}`;
         let html = `<span>${text}</span>`;
-        if(side === 'bot') html += `<span class="speak-btn" onclick="readOut('${text.replace(/'/g, "\\'")}')">🔊</span>`;
+        if(side === 'bot') html += `<span class="voice-icon" onclick="speakText('${text.replace(/'/g, "\\'")}')">🔊</span>`;
         div.innerHTML = html;
-        msgBox.appendChild(div);
-        msgBox.scrollTop = msgBox.scrollHeight;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
     }
 
-    function showSug(list) {
+    function showSuggestions(list) {
         const div = document.createElement('div');
-        div.className = 'sug-box';
+        div.className = 'sug-container';
         list.forEach(item => {
             const btn = document.createElement('button');
             btn.className = 'sug-btn';
             btn.innerText = item;
-            btn.onclick = () => { addMsg(item, 'user'); handleFlow(item); };
+            btn.onclick = () => { addMessage(item, 'user'); handleLogic(item); };
             div.appendChild(btn);
         });
-        msgBox.appendChild(div);
-        msgBox.scrollTop = msgBox.scrollHeight;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
     }
 
-    function runOnboarding() {
-        const saved = localStorage.getItem('lt_profile');
+    function initiateConversation() {
+        const saved = localStorage.getItem('lt_user');
         if(saved) {
             user = JSON.parse(saved);
             step = 100;
-            addMsg(`Vanakkam, ${user.name}! How can I help you today?`, 'bot');
+            addMessage(`Welcome back, ${user.name}! How can I help you today?`, 'bot');
             mainMenu();
         } else {
-            addMsg("Vanakkam! Welcome to Loyola Thozhan. To start, what is your Full Name?", 'bot');
+            addMessage("Vanakkam! Welcome to Loyola Thozhan. To begin, please enter your Full Name:", 'bot');
             step = 1;
         }
     }
 
-    function processInput() {
+    function sendMessage() {
+        const input = document.getElementById('user-msg');
         const val = input.value.trim();
         if(!val) return;
-        addMsg(val, 'user');
+        addMessage(val, 'user');
         input.value = '';
-        handleFlow(val);
+        handleLogic(val);
     }
 
-    function handleFlow(val) {
+    async function handleLogic(val) {
         setTimeout(async () => {
-            if(step === 1) { user.name = val; addMsg(`Hello ${val}. Please select your role:`, 'bot'); showSug(['Student', 'Staff', 'Guest']); step = 2; }
-            else if(step === 2) { user.role = val; if(val === 'Student') { addMsg("Which shift?", 'bot'); showSug(['Shift 1', 'Shift 2']); step = 3; } else { finish(); } }
-            else if(step === 3) { user.shift = val; addMsg("Enter Dept Number (e.g. 24-UAZ-050):", 'bot'); step = 4; }
-            else if(step === 4) { user.deptNo = val; finish(); }
-            else { await searchLogic(val); }
+            if(step === 1) {
+                user.name = val;
+                addMessage(`Thank you, ${val}. Please select your role:`, 'bot');
+                showSuggestions(['Student', 'Staff', 'Guest']);
+                step = 2;
+            } else if(step === 2) {
+                user.role = val;
+                if(val === 'Student') {
+                    addMessage("Understood. Which shift are you in?", 'bot');
+                    showSuggestions(['Shift 1', 'Shift 2']);
+                    step = 3;
+                } else { finalizeProfile(); }
+            } else if(step === 3) {
+                user.shift = val;
+                addMessage("Please enter your Department Code (e.g., 23-UAZ-051):", 'bot');
+                step = 4;
+            } else if(step === 4) {
+                user.dept = val;
+                finalizeProfile();
+            } else {
+                await processQuery(val);
+            }
         }, 600);
     }
 
-    function finish() { localStorage.setItem('lt_profile', JSON.stringify(user)); step = 100; addMsg("Profile saved! Ask me anything.", 'bot'); mainMenu(); }
-
-    function mainMenu() { showSug(['History', 'Scholarships', 'Who is Who', 'Bonafide Certificate', 'End Chat']); }
-
-    async function searchLogic(q) {
-        const query = q.toLowerCase();
-        
-        if (query.includes("history")) {
-            const resp = await fetch(csvLinks.hist);
-            const data = await resp.text();
-            addMsg(data.split("\n")[1].split(",")[1], "bot");
-        } 
-        else if (query.includes("vp") || query.includes("who is who")) {
-            const resp = await fetch(csvLinks.dir);
-            const rows = (await resp.text()).split("\n").map(r => r.split(","));
-            let found = rows.filter(r => r[2].includes(user.shift) || r[2].includes("1 & 2"));
-            let reply = "Key Officials for your shift:\n";
-            found.slice(0,4).forEach(f => reply += `\n- ${f[0]}: ${f[1]} (${f[4]})`);
-            addMsg(reply, "bot");
-        }
-        else if (query.includes("bonafide") || query.includes("certificate")) {
-            const resp = await fetch(csvLinks.proc);
-            const rows = (await resp.text()).split("\n").map(r => r.split(","));
-            let item = rows.find(r => r[0].toLowerCase().includes("bonafide"));
-            if(item) addMsg(item[1].replace(/{Shift - 1}/g, user.shift) + "\n\nDocs: " + item[2], "bot");
-        }
-        else if (query.includes("end chat")) {
-            addMsg("Thank you! Closing...", "bot"); setTimeout(toggleChat, 1500);
-        }
-        else { addMsg("I'm looking into that. Try asking for 'Scholarships' or 'VP details'.", "bot"); }
-        setTimeout(mainMenu, 2000);
+    function finalizeProfile() {
+        localStorage.setItem('lt_user', JSON.stringify(user));
+        step = 100;
+        addMessage("Profile created successfully! What would you like to know?", 'bot');
+        mainMenu();
     }
 
-    function startVoice() {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-IN'; recognition.start();
-        recognition.onresult = (e) => { input.value = e.results[0][0].transcript; processInput(); };
+    function mainMenu() {
+        showSuggestions(['History', 'Scholarships', 'Who is Who', 'OD Procedure', 'End Chat']);
     }
 
-    function readOut(text) {
+    async function processQuery(q) {
+    const scriptURL = "https://script.google.com/macros/s/AKfycbz_YcazodH28P6L2m6vAm50B-p-3a9fUotfQnPxNoOVEEDqnv3kN5odqwRk6q5Mot6J/exec";
+    
+    // Add a loading message
+    addMessage("Thinking...", 'bot');
+
+    const response = await fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({
+            query: q,
+            user: user // Passes Name, Shift, and Dept Number
+        })
+    });
+
+    const data = await response.json();
+    
+    // Update the "Thinking..." message with the real AI answer
+    const bots = document.querySelectorAll('.bot span');
+    bots[bots.length - 1].innerText = data.reply;
+    
+    speakText(data.reply); // Read it aloud for accessibility
+    setTimeout(mainMenu, 1000);
+}
+    function terminateApp() {
+        document.getElementById('main-container').style.display = 'none';
+        const splash = document.getElementById('splash-screen');
+        splash.style.display = 'flex';
+        splash.style.opacity = '1';
+        document.getElementById('splash-msg').innerHTML = "CHAT ENDED.<br><small>Refresh to start again.</small>";
+    }
+
+    // ACCESSIBILITY TOOLS
+    function speakText(text) {
         window.speechSynthesis.cancel();
         const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = 'en-IN'; window.speechSynthesis.speak(speech);
+        speech.lang = 'en-IN';
+        window.speechSynthesis.speak(speech);
     }
 
-    function clearChat() { msgBox.innerHTML = ''; addMsg("Cleared.", 'bot'); mainMenu(); }
-    function logout() { if(confirm("Reset profile?")) { localStorage.clear(); location.reload(); } }
+    function startVoiceRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return alert("Speech recognition not supported in this browser.");
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.start();
+        recognition.onresult = (e) => {
+            document.getElementById('user-msg').value = e.results[0][0].transcript;
+            sendMessage();
+        };
+    }
+
+    function logout() {
+        if(confirm("Logout and clear all data?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
 </script>
+
 </body>
 </html>
